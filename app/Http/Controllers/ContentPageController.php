@@ -5,42 +5,78 @@ namespace App\Http\Controllers;
 use App\Helpers\SystemConstantHelper;
 use App\Http\Requests\PageRequest;
 use App\Models\ContentPage;
+use App\Repositories\PageRepository;
+use App\Services\PageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
-
+/**
+ * Class ContentPageController
+ * @package App\Http\Controllers
+ */
 class ContentPageController extends Controller
 {
+    /**
+     * @var PageService
+     */
+    private $pageService;
+    /**
+     * @var PageRepository
+     */
+    private $pageRepository;
+
+    /**
+     * ContentPageController constructor.
+     * @param PageService $pageService
+     * @param PageRepository $pageRepository
+     */
+
+    public function __construct(PageService $pageService, PageRepository $pageRepository)
+    {
+        $this->pageService = $pageService;
+        $this->pageRepository = $pageRepository;
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\View
+     */
     public function index(Request $request)
     {
-        $query = ContentPage::query();
-
-        if($request->has('q')){
-            $key = $request->input('q');
-            $query->where(function($q) use ($key){
-               $q->where('title','like',"%$key%");
-               $q->orWhere('meta_keywords','like',"%$key%");
-               $q->orWhere('status','like',"$key");
-            });
+        if ($request->has('q')) {
+            $keyword = $request->input('q');
+            $pages = $this->pageService->searchPages($keyword);
+        } else {
+            $pages = $this->pageService->searchPages('');
         }
 
-        $pages = $query->latest()->paginate(5);
-
-        return view('pages.index',compact('pages'));
+        return view('pages.index', compact('pages'));
     }
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
     public function create()
     {
         return view('pages.create');
     }
 
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param PageRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(PageRequest $request)
     {
         try {
-            // Get all input except csrf token
-            $data = $request->except('_token');
 
-            // Store data into database
-            ContentPage::create($data);
+            $data = $request->except('_token');
+            $this->pageService->createPage($data);
+
 
             //Set Session success flash message
             Session::flash('success','Page Successfully Saved.');
@@ -61,18 +97,20 @@ class ContentPageController extends Controller
         }
     }
 
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param string $slug
+     * @param PageRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update($slug, PageRequest $request)
     {
-
-        // Retrieve the data using slug
-        $page = ContentPage::whereSlug($slug)->firstOrFail();
-
         try {
-            // Get all input except csrf token
-            $data = $request->except('_token');
 
-            // Store data into database
-            $page->update($data);
+            $page = $this->pageRepository->findBySlug($slug);
+            $data = $request->except('_token');
+            $this->pageService->updatePage($page, $data);
 
             //Set Session success flash message
             Session::flash('success','Page Successfully Updated.');
@@ -93,28 +131,40 @@ class ContentPageController extends Controller
         }
     }
 
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param string $slug
+     * @return \Illuminate\Contracts\View\View
+     */
     public function edit($slug)
     {
-        $page = ContentPage::whereSlug($slug)->firstOrFail();
+        $page = $this->pageRepository->findBySlug($slug);
         return view('pages.edit',compact('page'));
     }
 
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param string $slug
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function destroy($slug):RedirectResponse
     {
-        $page = ContentPage::whereSlug($slug)->first();
-
-        /**
-         * We can use another firstOrFail() instead of first(). But we don't it because if we do this the laravel
-         * application automatically abort(404). That is not my concern. My concern is when laravel abort(404) int that time
-         * the user can see the actual delete request path in the url section. That's can be a security issue
-        */
-        if(!$page){
-            Session::flash('error',"You have sent invalid request.");
+        try {
+            $page = $this->pageRepository->findBySlug($slug);
+            $this->pageService->deletePage($page);
+            Session::flash('success', 'Page Successfully Deleted.');
             return back();
-        }
+        } catch (\Exception $exception) {
+            // Grab the error message
+            $exceptionMessage = $exception->getMessage();
 
-        $page->delete();
-        Session::flash('success',"Page Successfully Deleted");
-        return back();
+            // Set Session error flash message
+            Session::flash('error',config('app.env') == SystemConstantHelper::LOCAL_ENV ? $exceptionMessage : "Something went wrong. Please try again later.");
+
+            // Redirect to the form
+            return redirect()->back();
+        }
     }
 }
