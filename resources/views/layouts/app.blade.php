@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <meta name="path" content="{{route('welcome')}}">
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
@@ -32,7 +33,7 @@
                         {{session()->has('success') ? session()->get('success'): (session()->has('error') ? session()->get('error'):"")}}
                     </p>
                     <p>
-                        <button onclick="closeAlert(this)">
+                        <button id="alert-close">
                             Close
                         </button>
                     </p>
@@ -45,11 +46,4 @@
             </main>
         </div>
     </body>
-    <script>
-        function closeAlert(el) {
-            const alertDiv = document.querySelector('#alertDiv')
-            alertDiv.classList.add('hidden')
-            console.log(alertDiv)
-        }
-    </script>
 </html>

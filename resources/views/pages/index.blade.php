@@ -33,9 +33,7 @@
                                         <x-info-button class="ml-3">
                                             <a href="{{route('pages')}}">Edit</a>
                                         </x-info-button>
-                                        <x-danger-button class="ml-3 py-1">
-                                            <a href="{{route('pages')}}">Delete</a>
-                                        </x-danger-button>
+                                        <x-danger-button class="ml-3 py-1 deletePage" data-key="{{$page->slug}}"> Delete </x-danger-button>
                                     </div>
                                 </td>
                             </tr>
@@ -47,4 +45,10 @@
             </div>
         </div>
     </div>
+
+    <form action="" method="POST"  id="deletePageForm">
+        @csrf
+        @method('DELETE')
+    </form>
+
 </x-app-layout>

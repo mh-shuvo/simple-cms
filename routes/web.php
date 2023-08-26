@@ -15,13 +15,13 @@ use \App\Http\Controllers\ContentPageController;
 |
 */
 
-Route::get('/', [WelcomeController::class,'showWelcomePage']);
+Route::get('/', [WelcomeController::class,'showWelcomePage'])->name('welcome');
 
 Route::group(['middleware'=>['auth']],function (){
     Route::get('/dashboard',[DashboardController::class,'showDashboard'])->name('dashboard');
     Route::get('/pages',[ContentPageController::class,'index'])->name('pages');
     Route::get('/pages/create',[ContentPageController::class,'create'])->name('pages.create');
-    Route::delete('/pages/id',[ContentPageController::class,'destroy'])->name('pages.destroy');
+    Route::delete('/pages/{slug}/delete',[ContentPageController::class,'destroy'])->name('pages.destroy');
 });
 
 require __DIR__.'/auth.php';
