@@ -20,6 +20,7 @@ Route::get('/', [WelcomeController::class,'showWelcomePage'])->name('welcome');
 Route::group(['middleware'=>['auth']],function (){
     Route::get('/dashboard',[DashboardController::class,'showDashboard'])->name('dashboard');
     Route::get('/pages',[ContentPageController::class,'index'])->name('pages');
+    Route::post('/pages',[ContentPageController::class,'store'])->name('pages.store');
     Route::get('/pages/create',[ContentPageController::class,'create'])->name('pages.create');
     Route::delete('/pages/{slug}/delete',[ContentPageController::class,'destroy'])->name('pages.destroy');
 });

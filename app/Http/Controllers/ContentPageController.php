@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PageCreateRequest;
 use App\Models\ContentPage;
-use Illuminate\Http\Request;
+use App\SystemConstants;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Session;
 
 class ContentPageController extends Controller
@@ -18,7 +20,35 @@ class ContentPageController extends Controller
         return view('pages.create');
     }
 
-    public function destroy($slug)
+    public function store(PageCreateRequest $request)
+    {
+        try {
+            // Get all input except csrf token
+            $data = $request->except('_token');
+
+            // Store data into database
+            ContentPage::create($data);
+
+            //Set Session success flash message
+            Session::flash('success','Page Successfully Saved.');
+
+            // Redirect to the List
+            return redirect()->route('pages');
+
+        }catch (\Exception $exception){
+            // Grab the error message
+            $exceptionMessage = $exception->getMessage();
+
+            // Set Session error flash message
+            Session::flash('error',config('app.env') == SystemConstants::LOCAL_ENV ? $exceptionMessage : "Something went wrong. Please try again later.");
+
+            // Redirect to the form
+            return redirect()->back();
+
+        }
+    }
+
+    public function destroy($slug):RedirectResponse
     {
         $page = ContentPage::whereSlug($slug)->first();
 

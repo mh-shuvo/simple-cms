@@ -10,6 +10,10 @@ class ContentPage extends Model
 {
     use HasFactory,Sluggable;
 
+
+    protected $fillable = ['title','content','meta_title','meta_description','meta_keywords'];
+
+
     /**
      * Return the sluggable configuration array for this model.
      *
