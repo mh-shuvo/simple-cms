@@ -11,7 +11,7 @@ class ContentPage extends Model
     use HasFactory,Sluggable;
 
 
-    protected $fillable = ['title','content','meta_title','meta_description','meta_keywords'];
+    protected $fillable = ['title','content','meta_title','meta_description','meta_keywords','status'];
 
 
     /**

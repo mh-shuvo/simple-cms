@@ -23,6 +23,8 @@ Route::group(['middleware'=>['auth']],function (){
     Route::post('/pages',[ContentPageController::class,'store'])->name('pages.store');
     Route::get('/pages/create',[ContentPageController::class,'create'])->name('pages.create');
     Route::delete('/pages/{slug}/delete',[ContentPageController::class,'destroy'])->name('pages.destroy');
+    Route::get('/pages/{slug}/edit',[ContentPageController::class,'edit'])->name('pages.edit');
+    Route::put('/pages/{slug}/update',[ContentPageController::class,'update'])->name('pages.update');
 });
 
 require __DIR__.'/auth.php';

@@ -21,7 +21,7 @@ class ContentPageFactory extends Factory
             'content' => fake()->paragraph,
             'meta_title' => fake()->sentence,
             'meta_description' => fake()->sentence,
-            'meta_keywords' => fake()->words(5, true),
+            'meta_keywords' => str_replace(' ',",",fake()->words(5, true)),
         ];
     }
 }
