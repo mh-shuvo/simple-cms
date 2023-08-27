@@ -21,4 +21,8 @@ class PageRepository
     {
         return ContentPage::whereSlug($slug)->firstOrFail();
     }
+    public function findBySlugForApi($slug)
+    {
+        return ContentPage::whereSlug($slug)->first();
+    }
 }

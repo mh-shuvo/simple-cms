@@ -1,9 +1,11 @@
 <?php
-use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Api\V1\Auth\ProfileController;
-use App\Http\Controllers\Api\V1\Auth\PageController;
+use App\Http\Controllers\Api\V1\PageController;
 use App\Http\Controllers\Api\V1\SeoUpdateController;
+use Illuminate\Support\Facades\Route;
+
 /**
  * Public Routes
  */

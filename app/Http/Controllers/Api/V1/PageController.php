@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Auth;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Api\ApiBaseController;
-use App\Services\PageService;
 use App\Repositories\PageRepository;
-use Illuminate\Http\Request;
+use App\Services\PageService;
 
 /**
  * Class PageController
@@ -55,7 +54,7 @@ class PageController extends ApiBaseController
     public function getSingleContentPages($slug)
     {
         // Retrieve a content page by slug from the repository
-        $page = $this->pageRepository->findBySlug($slug);
+        $page = $this->pageRepository->findBySlugForApi($slug);
 
         if (!$page) {
             return $this->sendError("Data Not Found", [], 404);
