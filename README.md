@@ -23,8 +23,12 @@
 - `php artisan key:generate`
 - `php artisan migrate`
 - `php artisan db:seed` to create dummy users and content pages.
-- `npm run dev` if you want to run dev mode or `npm run build` for build the admin frontend
+- `npm run build` for build the admin frontend
 - `php artisan serve` to start the backend server
+- `cd vue-frontend`
+- Update `.env` file form frontend
+- `npm install`
+- `npm run dev`
 
 
 ## API Documentation
