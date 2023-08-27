@@ -9,7 +9,7 @@
         <div v-else>
             <div v-if="page.title !== null">
                 <h1>{{ page.title }}</h1>
-                <p class="mb-10">{{ page.content }}</p>
+                <p class="mb-10" v-html="page.content"></p>
                 <p class="mb-10"><b class="bold">Meta Title:</b> {{ page.meta_title }}</p>
                 <p class="mb-10"><b class="bold">Meta Description:</b> {{ page.meta_description }}</p>
                 <p class="mb-10">
