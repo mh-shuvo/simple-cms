@@ -57,4 +57,13 @@ class PageService
     {
         $page->delete();
     }
+    /**
+     * Get all content pages.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAllContentPages($fields=['*'])
+    {
+        return ContentPage::select($fields)->latest()->get();
+    }
 }

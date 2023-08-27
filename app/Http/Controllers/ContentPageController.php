@@ -73,8 +73,10 @@ class ContentPageController extends Controller
     public function store(PageRequest $request)
     {
         try {
-
+            // Extract  data from the request
             $data = $request->except('_token');
+
+            // store the data using service
             $this->pageService->createPage($data);
 
 
@@ -107,9 +109,13 @@ class ContentPageController extends Controller
     public function update($slug, PageRequest $request)
     {
         try {
-
+            // Find the content page by its slug using the repository
             $page = $this->pageRepository->findBySlug($slug);
+
+            // Extract  data from the request
             $data = $request->except('_token');
+
+            // Update the page's information using the service
             $this->pageService->updatePage($page, $data);
 
             //Set Session success flash message
@@ -139,7 +145,10 @@ class ContentPageController extends Controller
      */
     public function edit($slug)
     {
+        // Find the content page by its slug using the repository
         $page = $this->pageRepository->findBySlug($slug);
+
+        // Return the data to the view page
         return view('pages.edit',compact('page'));
     }
 
@@ -152,7 +161,10 @@ class ContentPageController extends Controller
     public function destroy($slug):RedirectResponse
     {
         try {
+            // Find the content page by its slug using the repository
             $page = $this->pageRepository->findBySlug($slug);
+
+            // Delete the page data using the service
             $this->pageService->deletePage($page);
             Session::flash('success', 'Page Successfully Deleted.');
             return back();

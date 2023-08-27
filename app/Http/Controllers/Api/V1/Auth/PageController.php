@@ -3,31 +3,64 @@
 namespace App\Http\Controllers\Api\V1\Auth;
 
 use App\Http\Controllers\Api\ApiBaseController;
-use App\Models\ContentPage;
+use App\Services\PageService;
+use App\Repositories\PageRepository;
 use Illuminate\Http\Request;
 
+/**
+ * Class PageController
+ * @package App\Http\Controllers\Api\V1\Auth
+ */
 class PageController extends ApiBaseController
 {
+    protected $pageService;
+    protected $pageRepository;
 
-    public function getAllContentPages()
+    /**
+     * PageController constructor.
+     *
+     * @param PageService $pageService
+     * @param PageRepository $pageRepository
+     */
+    public function __construct(PageService $pageService, PageRepository $pageRepository)
     {
-        $pages = ContentPage::select('title','slug')->latest()->get();
-
-        foreach ($pages as $page){
-            $page->url = url('api/v1/pages/'.$page->slug);
-        }
-        return $this->sendResponse($pages->toArray(),"Data Found");
+        $this->pageService = $pageService;
+        $this->pageRepository = $pageRepository;
     }
 
-    public function getSingleContentPages($slug)
+    /**
+     * Get all content pages.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAllContentPages()
     {
-        $page = ContentPage::whereSlug($slug)->first();
+        // Retrieve all content pages from the service
+        $pages = $this->pageService->getAllContentPages(['title', 'slug']);
 
-        if(!$page){
-            return $this->sendError("Data Not Found",[],404);
+        // Add URLs to the pages
+        foreach ($pages as $page) {
+            $page->url = url('api/v1/pages/' . $page->slug);
         }
 
-        return $this->sendResponse($page->toArray(),'Data Found');
+        return $this->sendResponse($pages->toArray(), "Data Found");
+    }
 
+    /**
+     * Get a single content page by slug.
+     *
+     * @param string $slug
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getSingleContentPages($slug)
+    {
+        // Retrieve a content page by slug from the repository
+        $page = $this->pageRepository->findBySlug($slug);
+
+        if (!$page) {
+            return $this->sendError("Data Not Found", [], 404);
+        }
+
+        return $this->sendResponse($page->toArray(), 'Data Found');
     }
 }
