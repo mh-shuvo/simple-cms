@@ -26,7 +26,8 @@
 - `npm run build` for build the admin frontend
 - `php artisan serve` to start the backend server
 - `cd vue-frontend`
-- Update `.env` file form frontend
+- `cp .env.example .env`
+-  Update `.env` file based on backend
 - `npm install`
 - `npm run dev`
 
